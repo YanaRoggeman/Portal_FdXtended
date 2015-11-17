@@ -1,0 +1,405 @@
+html{
+    height:100%;
+}
+
+body{
+    width:100%;
+    margin: 0;
+    color: #3E4443;
+    font-family: Arial;
+    font-size: 11pt;
+    background: #3E4443 url("../img/bg.png") repeat left top;
+}
+
+/* --- Links --- */
+a:link{
+    text-decoration: none;
+    color:#3E4443;
+    font-weight: bold;
+}
+
+a:visited{
+    color:#3E4443;
+}
+
+a:hover {
+    color:#D14D12;
+}
+
+/* -------------------- */
+/* --- Overal style --- */
+/* -------------------- */
+#container{
+    width:80%;
+    max-width: 550px;
+    margin:20px auto 50px auto;
+    height:auto;
+    border-color:#D14D12;
+    border-style: solid;
+    border-width: 5px;
+    border-radius: 10px;
+    background-color: #FFFFFF;
+    text-align: center;
+}
+
+#content{
+    padding: 20px;
+    padding-bottom:0;
+    widht:100%;
+}
+
+#container h3{
+    color:#3E4443;
+}
+
+.italic{
+    font-style: italic;
+    font-size: 10pt;
+}
+
+#footer{
+    height:auto;
+    padding:7px;
+    margin: 0 32px 15px auto;
+}
+
+#footer img{
+    max-width: 250px;
+}
+
+.error{
+    font-weight: bold;
+    color:#D14D12;
+}
+
+/* --- Form layout --- */
+
+form{
+    margin-bottom: 20px;
+}
+
+fieldset{
+    border: 1px groove #E5E3E3;
+}
+fieldset legend{
+    text-align:left;
+}
+
+form h3, h2, h1{
+    text-align: center;
+}
+
+form input[type=submit]{
+    min-width:120px;
+    min-height: 30px;
+    border-radius: 3px;
+    border-style: none;
+    background-color: #D14D12;
+    color:#FFFFFF;
+}
+
+form input[type=text], input[type=password]{
+    background-color: #DADADA;
+    border-radius: 3px;
+    border:none;
+    padding: 5px;
+}
+
+form input[type=checkbox]{
+    margin:0;
+    padding:0;
+    margin-right: 10px;
+}
+
+form label{
+    text-align:left;
+    margin: 5px auto 5px auto;
+}
+
+input[type=button]{
+    width:80%;
+    height: 30px;
+    margin:10px;
+    border-radius: 3px;
+    border-style: none;
+    background-color: #D14D12;
+    color:#FFFFFF;
+}
+
+input[type=radio]{
+    width: 15px;
+    text-align:left;
+}
+
+/* --- Status page --- */
+/* - Sessions table - */
+#sessions table{
+    font-size: 7pt;
+    margin:auto;
+    border-collapse: collapse;
+    width:100%;
+    border-spacing: 0;
+}
+
+#sessions table thead td:not(:first-child){
+    border: 1px ridge #3E4443 !important;
+    text-align: left;
+    padding:3px;
+}
+
+#sessions table thead img{
+    float:right;
+    margin-right: 5px;
+}
+
+#sessions table tbody td:not(:first-child){
+    border: 0.7px black ridge;
+    height:15px;
+}
+
+.tdGray td:not(:first-child){
+    background-color: #D3D4D3;
+}
+/* - End Table - */
+
+#bandwidthCanvas{
+    width: 100%;
+    text-align: center;
+    font-size: 105pt;
+}
+
+#bandwidth_graph{
+    width: 100%;
+    margin:15px auto 15px auto;
+}
+
+.statusPage{
+    text-align:left;
+}
+.statusPage h2{
+    text-align:left;
+    margin-left: 10px;
+}
+.statusPage input[type=button]{
+    padding:0;
+    margin:5px;
+    min-width: 150px;
+}
+
+.divFloatLeft{
+    display: block;
+    float:left;
+    width: 48%;
+}
+
+/* --- Plan.php & Upgrade.php --- */
+.formFloatLeft{
+    text-align: left;
+}
+
+.formFloatLeft label{
+    width: 80%;
+    display: inline-block;
+}
+
+.planDescription{
+    margin-left: 25px;
+    font-size:  10pt;
+    font-style: italic;
+}
+
+.labelPlan{
+    color: #E14E0D;
+    font-weight: bold;
+}
+
+/* --------------------- */
+/* --- Bigger screen --- */
+/* --------------------- */
+@media only screen and (min-width:630px){
+
+    /* --- Form --- */
+    form{
+        text-align: right;
+        width:90%;
+        margin:20px auto;
+    }
+
+    form input[type=submit]{
+        margin:10px 10px 10px 0;
+        box-sizing: content-box;
+    }
+
+    form input[type=text], input[type=password]{
+        width:50%;
+        margin: 10px;
+    }
+
+    form label{
+        padding-right: 20px;
+    }
+
+    form select{
+        width:50%;
+        margin:10px;
+    }
+
+    .selectDate{
+        width: 46.5%;
+        margin:0;
+    }
+
+    form input[type=checkbox]{
+        vertical-align:middle;
+    }
+
+    /* --- Div lineouts --- */
+    .rightColumnDiv {
+        display:inline-block;
+        width: 50%;
+        margin:10px;
+        text-align:left;
+    }
+
+    .divFloatRight{
+        display: inline-block;
+        width:50%;
+        margin-top: 45px;
+        float:right;
+    }
+
+    #footer{
+        text-align: right;
+        width: 90%;
+    }
+}
+/* -------------------- */
+/* --- Small screen --- */
+/* -------------------- */
+
+@media only screen and (max-width: 629px){
+
+    /* --- Forms --- */
+    form{
+        width:100%;
+        text-align: center ;
+    }
+
+    form input{
+        width:100%;
+    }
+
+    form input[type=text], input[type=password]{
+        margin-bottom: 15px;
+    }
+
+    form input[type=checkbox]{
+        float:left;
+        width:10px;
+        margin-top: 7px;
+    }
+
+    .checkboxLabel{
+        float:left;
+        margin-bottom: 10px;
+        padding-right: 10px;
+    }
+
+    .checkboxInput{
+        display: inline-block;
+        float:left;
+        width: 100px;
+    }
+
+    .rightColumnDiv label{
+        width: 90%;
+        padding-top:5px;
+    }
+
+    /*.lblCheckbox{     //If labels need to center enable this && disable label>display:block
+        display: block;
+    }*/
+
+    .divFloatRight{
+        width: 50%;
+    }
+
+    form label{
+        display: block;
+    }
+
+    .selectDate{
+        width: 47%;
+    }
+
+    select{
+        width: 100%;
+        margin-bottom:15px;
+    }
+
+    #sessions table {
+        font-size: 6pt;
+    }
+
+    #footer{
+        text-align: center;
+        width:100%;
+
+    }
+
+    #footer img{
+        width:100%;
+    }
+/* --- Status page --- */
+/* - Sessions table - */
+
+    #sessions table thead td:not(:first-child){
+        text-align: center;
+        min-width: 45px;
+    }
+
+    #sessions table thead img{
+        float:left;
+    }
+
+    /* - End Table - */
+
+}
+
+@media only screen and (max-width: 460px){
+    /* --- Status page --- */
+    /* - Sessions table - */
+
+    #content{
+        padding: 2px;
+    }
+
+    #sessions table thead td:not(:first-child){
+        text-align: left;
+        min-width:1px;
+        vertical-align: top;
+    }
+
+    #sessions table thead img{
+        float:right;
+        padding:4px;
+        padding-top: 10px;
+    }
+
+    /* - End Table - */
+
+}
+
+/* ------------------------- */
+/* --- Very small screen --- */
+/* ------------------------- */
+@media only screen and (max-width: 354px) {
+
+    .selectDate{
+         width: 45%;
+     }
+
+    #sessions{
+        display: none;
+    }
+}
