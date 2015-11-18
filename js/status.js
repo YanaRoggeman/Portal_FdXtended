@@ -14,10 +14,12 @@ var external_device="";
 
 // How fast does the status data needs to be refreshed /
 var refreshRateStatus = 10000;
+var retryIfFails = 5;
+var loadError = "Loading Failed";
 
 /* --- */
 // Divs the info will be set to if not empty
-var elUserData = {
+var divsUserData = {
     timeLeft_sec:null,
     totalTime_sec:null,
     timeLeftText:null,
@@ -39,9 +41,12 @@ var elUserData = {
     plan_description:null,
     plan_price:null,
 
-    pms_user:null
-};
+    pms_user:null,
 
+    loading:null
+};
+var statusRetry = 0;
+var statusRetryLoadingTime = 200;
 
 function RefreshStatusData(sessionID){
     GetStatus(sessionID);
@@ -53,26 +58,26 @@ function GetStatus(sessionid)
 {
     try
     {
-        var timeleft = (elUserData.timeLeft_sec != null) || (elUserData.timeLeftText != null);
-        var voldown = elUserData.volumeDownLeft != null || elUserData.volumeDownText != null || elUserData.totalVolumeDown != null || elUserData.percentVolumeDown != null;
-        var volup = elUserData.volumeUpLeft != null || elUserData.volumeUpText != null || elUserData.totalVolumeUp != null || elUserData.percentVolumeUp != null;
-        var status = elUserData.status != null;
-        var plan_name = elUserData.plan_name != null;
-        var plan_description = elUserData.plan_description != null;
-        var plan_price = elUserData.plan_price != null;
+        var timeleft = (divsUserData.timeLeft_sec != null) || (divsUserData.timeLeftText != null);
+        var voldown = divsUserData.volumeDownLeft != null || divsUserData.volumeDownText != null || divsUserData.totalVolumeDown != null || divsUserData.percentVolumeDown != null;
+        var volup = divsUserData.volumeUpLeft != null || divsUserData.volumeUpText != null || divsUserData.totalVolumeUp != null || divsUserData.percentVolumeUp != null;
+        var status = true;//divsUserData.status != null;          //Set As true for loading
+        var plan_name = divsUserData.plan_name != null;
+        var plan_description = divsUserData.plan_description != null;
+        var plan_price = divsUserData.plan_price != null;
 
         // branch for native XMLHttpRequest object
         if (window.XMLHttpRequest)
         {
             regprogress = new XMLHttpRequest();
-            regprogress.onreadystatechange = SetStatus;
+            regprogress.onreadystatechange = function(){SetStatus(sessionid)};
             regprogress.open("GET", "../hsm/ajax_status.php?time="+timeleft+"&voldown="+voldown+"&volup="+volup+"&status="+status+"&plan_name="+plan_name+"&plan_description="+plan_description+"&plan_price="+plan_price+(sessionid!=""?"&sessionid="+sessionid:""), true);
             regprogress.send(null);
         }
         else if (window.ActiveXObject)
         {
             regprogress = new ActiveXObject("Microsoft.XMLHTTP");
-            regprogress.onreadystatechange = SetStatus;
+            regprogress.onreadystatechange =  function(){SetStatus(sessionid)};
             regprogress.open("GET", "../hsm/ajax_status.php?time="+timeleft+"&voldown="+voldown+"&volup="+volup+"&status="+status+"&plan_name="+plan_name+"&plan_description="+plan_description+"&plan_price="+plan_price+(sessionid!=""?"&sessionid="+sessionid:""), true);
             regprogress.send();
         }
@@ -80,87 +85,130 @@ function GetStatus(sessionid)
     catch(e){ }
 }
 
-function SetStatus(){
+function SetStatus(sessionid){
     try{
         if(regprogress.readyState == 4 && regprogress.status == 200){
             response = regprogress.responseXML.documentElement;
 
-            if(elUserData.status != null && response.getElementsByTagName('status')[0] != null && response.getElementsByTagName('status')[0].firstChild != null)
-                elUserData.status.innerHTML = response.getElementsByTagName('status')[0].firstChild.data;
+            var status = response.getElementsByTagName('status')[0].firstChild.data;
+            if(status == "Online" && divsUserData.status != null) {
+                divsUserData.status.innerHTML = status;
 
-            if(elUserData.plan_name != null && response.getElementsByTagName('plan_name')[0] != null && response.getElementsByTagName('plan_name')[0].firstChild != null)
-                elUserData.plan_name.innerHTML = response.getElementsByTagName('plan_name')[0].firstChild.data;
+            /* IF LOADING - CALL FAILED */
+            }else if(status == "Offline"){
+                if(statusRetry < retryIfFails) {
+                    if (divsUserData.loading != null)
+                        divsUserData.loading.innerHTML = "<img src='img/loading.gif' alt='...'>";
 
-            if(elUserData.plan_description != null && response.getElementsByTagName('plan_description')[0] != null && response.getElementsByTagName('plan_description')[0].firstChild != null) {
-                elUserData.plan_description.innerHTML = response.getElementsByTagName('plan_description')[0].firstChild.data;
+                    statusRetry++;
+                    setTimeout("RefreshStatusData('" + sessionid + "')", statusRetryLoadingTime);
+                }else{
+                    if (divsUserData.loading != null)
+                        divsUserData.loading.innerHTML = loadError;
+                }
+                return;
+            }
+            /* END LOADING */
+
+
+            if(divsUserData.plan_name != null && response.getElementsByTagName('plan_name')[0] != null && response.getElementsByTagName('plan_name')[0].firstChild != null)
+                divsUserData.plan_name.innerHTML = response.getElementsByTagName('plan_name')[0].firstChild.data;
+
+            if(divsUserData.plan_description != null && response.getElementsByTagName('plan_description')[0] != null && response.getElementsByTagName('plan_description')[0].firstChild != null) {
+                divsUserData.plan_description.innerHTML = response.getElementsByTagName('plan_description')[0].firstChild.data;
             }
 
-            if(elUserData.plan_price != null && response.getElementsByTagName('plan_price')[0] != null && response.getElementsByTagName('plan_price')[0].firstChild != null)
-                elUserData.plan_price.innerHTML = response.getElementsByTagName('plan_price')[0].firstChild.data;
+            if(divsUserData.plan_price != null && response.getElementsByTagName('plan_price')[0] != null && response.getElementsByTagName('plan_price')[0].firstChild != null)
+                divsUserData.plan_price.innerHTML = response.getElementsByTagName('plan_price')[0].firstChild.data;
 
-            if(elUserData.volumeDownLeft != null && response.getElementsByTagName('volume_down_left')[0] != null && response.getElementsByTagName('volume_down_left')[0].firstChild != null) {
+            if(divsUserData.volumeDownLeft != null && response.getElementsByTagName('volume_down_left')[0] != null && response.getElementsByTagName('volume_down_left')[0].firstChild != null) {
                 var volume_down_left = response.getElementsByTagName('volume_down_left')[0].firstChild.data;
-                elUserData.volumeDownLeft.innerHTML = volume_down_left;
+                divsUserData.volumeDownLeft.innerHTML = volume_down_left;
             }
 
-            if(elUserData.totalVolumeDown != null && response.getElementsByTagName('total_volume_down')[0] != null && response.getElementsByTagName('total_volume_down')[0].firstChild != null) {
+            if(divsUserData.totalVolumeDown != null && response.getElementsByTagName('total_volume_down')[0] != null && response.getElementsByTagName('total_volume_down')[0].firstChild != null) {
                 var total_volume_down = response.getElementsByTagName('total_volume_down')[0].firstChild.data;
-                elUserData.totalVolumeDown.innerHTML = total_volume_down;
+                divsUserData.totalVolumeDown.innerHTML = total_volume_down;
             }
 
-            if(elUserData.volumeDownText != null && response.getElementsByTagName('volume_down_text')[0] != null && response.getElementsByTagName('volume_down_text')[0].firstChild != null) {
-                elUserData.volumeDownText.innerHTML = response.getElementsByTagName('volume_down_text')[0].firstChild.data;
+            if(divsUserData.volumeDownText != null && response.getElementsByTagName('volume_down_text')[0] != null && response.getElementsByTagName('volume_down_text')[0].firstChild != null) {
+                divsUserData.volumeDownText.innerHTML = response.getElementsByTagName('volume_down_text')[0].firstChild.data;
             }
 
-            if(elUserData.percentVolumeDown != null && response.getElementsByTagName('')[0] != null && volume_down_left != null && total_volume_down != null)
-                elUserData.percentVolumeDown.innerHTML = Math.round((volume_down_left / total_volume_down)*100) + "%";
+            if(divsUserData.percentVolumeDown != null && response.getElementsByTagName('')[0] != null && volume_down_left != null && total_volume_down != null)
+                divsUserData.percentVolumeDown.innerHTML = Math.round((volume_down_left / total_volume_down)*100) + "%";
 
-            if(elUserData.totalVolumeUp != null && response.getElementsByTagName('total_volume_up')[0] != null && response.getElementsByTagName('total_volume_up')[0].firstChild != null) {
+            if(divsUserData.totalVolumeUp != null && response.getElementsByTagName('total_volume_up')[0] != null && response.getElementsByTagName('total_volume_up')[0].firstChild != null) {
                 var total_volume_up = response.getElementsByTagName('total_volume_up')[0].firstChild.data;
-                elUserData.totalVolumeUp.innerHTML = total_volume_up;
+                divsUserData.totalVolumeUp.innerHTML = total_volume_up;
             }
 
-            if(elUserData.volumeUpLeft != null && response.getElementsByTagName('volume_up_left')[0] != null && response.getElementsByTagName('volume_up_left')[0].firstChild != null) {
+            if(divsUserData.volumeUpLeft != null && response.getElementsByTagName('volume_up_left')[0] != null && response.getElementsByTagName('volume_up_left')[0].firstChild != null) {
                     var volume_up_left = response.getElementsByTagName('volume_up_left')[0].firstChild.data;
-                    elUserData.volumeUpLeft.innerHTML = volume_up_left;
+                    divsUserData.volumeUpLeft.innerHTML = volume_up_left;
             }
 
-            if(elUserData.volumeUpText != null && response.getElementsByTagName('volume_up_text')[0] != null && response.getElementsByTagName('volume_up_text')[0].firstChild != null) {
-                elUserData.volumeUpText.innerHTML = response.getElementsByTagName('volume_up_text')[0].firstChild.data;
+            if(divsUserData.volumeUpText != null && response.getElementsByTagName('volume_up_text')[0] != null && response.getElementsByTagName('volume_up_text')[0].firstChild != null) {
+                divsUserData.volumeUpText.innerHTML = response.getElementsByTagName('volume_up_text')[0].firstChild.data;
             }
 
-            if(elUserData.percentVolumeUp != null && response.getElementsByTagName('volume_down_left')[0] != null && volume_up_left != null && total_volume_up != null){
-                elUserData.percentVolumeUp.innerHTML = Math.round((volume_up_left / total_volume_up)*100) + "%";
+            if(divsUserData.percentVolumeUp != null && response.getElementsByTagName('volume_down_left')[0] != null && volume_up_left != null && total_volume_up != null){
+                divsUserData.percentVolumeUp.innerHTML = Math.round((volume_up_left / total_volume_up)*100) + "%";
             }
 
-            if(elUserData.timeLeft_sec != null && response.getElementsByTagName('timeleft')[0] != null && response.getElementsByTagName('timeleft')[0].firstChild != null){
-                elUserData.timeLeft_sec.innerHTML = response.getElementsByTagName('timeleft')[0].firstChild.data;
+            if(divsUserData.timeLeft_sec != null && response.getElementsByTagName('timeleft')[0] != null && response.getElementsByTagName('timeleft')[0].firstChild != null){
+                divsUserData.timeLeft_sec.innerHTML = SecondsToTime(response.getElementsByTagName('timeleft')[0].firstChild.data);
             }
 
-            if(elUserData.totalTime_sec != null && response.getElementsByTagName('total_time')[0] != null && response.getElementsByTagName('total_time')[0].firstChild != null) {
-                elUserData.totalTime_sec.innerHTML = response.getElementsByTagName('total_time')[0].firstChild.data;
+            if(divsUserData.totalTime_sec != null && response.getElementsByTagName('total_time')[0] != null && response.getElementsByTagName('total_time')[0].firstChild != null) {
+                divsUserData.totalTime_sec.innerHTML = SecondsToTime(response.getElementsByTagName('total_time')[0].firstChild.data);
             }
 
-            if(elUserData.timeLeftText != null && response.getElementsByTagName('timeleft_text')[0] != null && response.getElementsByTagName('timeleft_text')[0].firstChild != null){
-                elUserData.timeLeftText.innerHTML = response.getElementsByTagName('timeleft_text')[0].firstChild.data;
+            if(divsUserData.timeLeftText != null && response.getElementsByTagName('timeleft_text')[0] != null && response.getElementsByTagName('timeleft_text')[0].firstChild != null){
+                divsUserData.timeLeftText.innerHTML = response.getElementsByTagName('timeleft_text')[0].firstChild.data;
             }
 
-            //Timeleft2 ??
+            if(divsUserData.startTime != null && response.getElementsByTagName('start_time')[0] != null && response.getElementsByTagName('start_time')[0].firstChild != null)
+                divsUserData.startTime.innerHTML = UnixToDate(response.getElementsByTagName('start_time')[0].firstChild.data);
 
-            if(elUserData.startTime != null && response.getElementsByTagName('start_time')[0] != null && response.getElementsByTagName('start_time')[0].firstChild != null)
-                elUserData.startTime.innerHTML = response.getElementsByTagName('start_time')[0].firstChild.data;
+            if(divsUserData.endTime != null) {
+                if (response.getElementsByTagName('end_time')[0] != null && response.getElementsByTagName('end_time')[0].firstChild != null) {
+                    divsUserData.endTime.innerHTML = UnixToDate(response.getElementsByTagName('end_time')[0].firstChild.data);
+                }else if(response.getElementsByTagName('start_time')[0] != null && response.getElementsByTagName('start_time')[0].firstChild != null){
+                    divsUserData.endTime.innerHTML = "∞";
+                }
+            }
 
-            if(elUserData.endTime != null && response.getElementsByTagName('end_time')[0] != null && response.getElementsByTagName('end_time')[0].firstChild != null)
-                elUserData.endTime.innerHTML = response.getElementsByTagName('end_time')[0].firstChild.data;
-
-            if(elUserData.pms_user != null){
-                elUserData.pms_user.innerHTML = response.getElementsByTagName('pms_user')[0].firstChild.data;
+            if(divsUserData.pms_user != null){
+                divsUserData.pms_user.innerHTML = response.getElementsByTagName('pms_user')[0].firstChild.data;
             }
 
         }
     }catch(e){
         document.getElementById("plan_description").innerHTML = "something wrong " + e;
     }
+}
+
+function SecondsToTime(time){
+    if(time == -1) return "∞";
+    time = Math.floor(time);
+    var hours = "0"+ Math.floor(time/ 3600);
+    var min = "0" + Math.floor((time - hours * 3600) / 60);
+    var sec = "0" + Math.floor(time - (hours*3600) - (min * 60));
+
+    return (hours.substr(-2)+":"+min.substr(-2)+":"+sec.substr(-2));
+}
+
+function UnixToDate(unixDate){
+    var date = new Date(unixDate*1000);
+    var day = "0" + date.getDate();
+    var month = "0" + date.getMonth();
+    var year = date.getFullYear();
+    var hours = date.getHours();
+    var minutes = "0" + date.getMinutes();
+    var seconds = "0" + date.getSeconds();
+
+    return (day.substr(-2)+"/"+ month.substr(-2)+"/"+year+" "+ hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2));
 }
 
 /* --------------------------------------------------- */
@@ -438,7 +486,7 @@ function LoadSessionData(sessionid)
             httpSessions = new ActiveXObject("Microsoft.XMLHTTP");
             if (httpSessions) {
                 httpSessions.onreadystatechange = SetSessions;
-                httpSessions.open("GET", "../hsm/ajax_status.php?type=sessions&sort="+sort+"&sort_type="+sort_type+(sessionid!=""?"&sessionid="+sessionid:""), true);
+                httpSessions.open("GET", "../hsm/ajax_status.php?type=sessions&sort="+sort+"&max_sessions="+maxShownSessions+"&sort_type="+sort_type+(sessionid!=""?"&sessionid="+sessionid:""), true);
                 httpSessions.send();
             }
         }

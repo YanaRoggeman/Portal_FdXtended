@@ -24,9 +24,6 @@ if(!$_SESSION['PORTAL']['user'] && !isset($sessionid)) {
 $publicIP = $_SESSION['PORTAL']['subscriber_ip'];
 $time_left = active_time_left($_SESSION['PORTAL']['upgrade_user']);
 
-/* If you want to know if the current account is a PMS account
- */ $userIsPMS = isset($_SESSION['PORTAL']['FIAS_RN']);
-
 //if isset $_SESSION['PORTAL']['FIAS_RN'] -/ pms account
 if($_SESSION['PORTAL']['pms'] === true) {
     $roomNumber = $GUEST->room;
@@ -44,6 +41,10 @@ if($_SESSION['PORTAL']['pms'] === true) {
          * $GUEST->arrival             * $GUEST->nopost
          * $GUEST->departure            */
 
+
+/* If you want to know if the current account is a PMS account
+ */ $userIsPMS = ($roomNumber != "");
+
 }
 ?>
 <html xmlns="http://www.w3.org/1999/html">
@@ -56,27 +57,33 @@ if($_SESSION['PORTAL']['pms'] === true) {
         function Load(sessionId){
 
             /* Set the divs for the status data and retrieve Status data */
-            elUserData.status =             document.getElementById("status");
+            loadError = "<?= $arr_portal_lang['loading_failed']; ?>";
+            divsUserData.loading =            document.getElementById("loading");
 
-            elUserData.plan_name =          document.getElementById("plan_name");
-            elUserData.plan_description =   document.getElementById("plan_description");
-            elUserData.plan_price =         document.getElementById("plan_price");
+            divsUserData.status =             document.getElementById("status");
 
-            elUserData.totalTime_sec =      document.getElementById("total_time_sec");
-            elUserData.timeLeft_sec =       document.getElementById("timeleft");
-            elUserData.timeLeftText =       document.getElementById("timeleft_text");
+            divsUserData.plan_name =          document.getElementById("plan_name");
+            divsUserData.plan_description =   document.getElementById("plan_description");
+            divsUserData.plan_price =         document.getElementById("plan_price");
 
-            elUserData.totalVolumeDown =    document.getElementById("total_volume_down");
-            elUserData.volumeDownLeft =     document.getElementById("volume_down_left");
-            elUserData.volumeDownText =     document.getElementById("volume_down_left_text");
-            elUserData.percentVolumeDown =  document.getElementById("percent_volume_up");
+            divsUserData.totalTime_sec =      document.getElementById("total_time_sec");
+            divsUserData.timeLeft_sec =       document.getElementById("timeleft");
+            divsUserData.timeLeftText =       document.getElementById("timeleft_text");
 
-            elUserData.totalVolumeUp =      document.getElementById("total_volume_up");
-            elUserData.volumeUpLeft =       document.getElementById("volume_up_left");
-            elUserData.volumeUpText =       document.getElementById("volume_up_left_text");
-            elUserData.percentVolumeUp =    document.getElementById("percent_volume_down");
+            divsUserData.totalVolumeDown =    document.getElementById("total_volume_down");
+            divsUserData.volumeDownLeft =     document.getElementById("volume_down_left");
+            divsUserData.volumeDownText =     document.getElementById("volume_down_left_text");
+            divsUserData.percentVolumeDown =  document.getElementById("percent_volume_up");
 
-            elUserData.pms_user =           document.getElementById("pms_user");
+            divsUserData.totalVolumeUp =      document.getElementById("total_volume_up");
+            divsUserData.volumeUpLeft =       document.getElementById("volume_up_left");
+            divsUserData.volumeUpText =       document.getElementById("volume_up_left_text");
+            divsUserData.percentVolumeUp =    document.getElementById("percent_volume_down");
+
+
+            divsUserData.startTime =          document.getElementById("start_time");
+            divsUserData.endTime=             document.getElementById("end_time");
+            divsUserData.pms_user =           document.getElementById("pms_user");
 
             RefreshStatusData(sessionId);
 
@@ -100,7 +107,13 @@ if($_SESSION['PORTAL']['pms'] === true) {
         <div class="divFloatLeft">
             <div id="error"></div>
             <h4 class="italic"><?= $publicIP ?></h4>
+            <?php
+            if($userIsPMS){
+                echo "room: ".$roomNumber;
+            }
+            ?>
             <p id="status"></p>
+            <p id="loading"></p>
 
             <p>
                 <span id="plan_name"></span> - <span id="plan_price"></span><br/>
@@ -108,7 +121,12 @@ if($_SESSION['PORTAL']['pms'] === true) {
             </p>
 
             <p>
-            <span id="timeleft" ></span>/<span id="total_time_sec" ></span> <br/>
+                <span id="start_time"></span> <br/>
+                to
+                <span id="end_time"></span>
+            </p>
+            <p>used
+            <span id="timeleft" ></span> of <span id="total_time_sec" ></span> <br/>
             <span id="timeleft_text" ></span><br/>
             </p>
             <p id="total_volume_down" >     </p>
@@ -129,7 +147,7 @@ if($_SESSION['PORTAL']['pms'] === true) {
             <input type="button" value="<?= $arr_portal_lang["upgrade_billing_plan"]; ?>" onclick="window.location.href ='<?= $upgradeLink?>'">
 
             <?php
-            if($change_pass_portal && !$userIsPMS) {   // If the user is enabled to change the password
+            if($change_pass_portal && !$userIsPMS) {   // If the user is not PMS and can change the password
                 ?>
                 <input type="button" value="<?= $arr_portal_lang["change_password"]; ?>" onclick="window.location.href = 'password.php'">
                 <?php

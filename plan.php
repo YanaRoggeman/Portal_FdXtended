@@ -10,6 +10,8 @@ require($_SERVER['DOCUMENT_ROOT']."/hsm/plan_execute.php");
  *      Subscribers > Reload cards > add
  */
 
+$userLoggedIn = $_SESSION['PORTAL']['user '] && isset($sessionid);
+
 // Fetch the available billing plans
 $plan=hsm_fetch_object($plans);
 $outputPlans = '<input type="radio" checked name="plan" value="'.$plan->id.'" id="'.$plan->id.'"><label for="'.$plan->id.'" class="labelPlan">'.$plan->name.'</label>';
@@ -33,7 +35,7 @@ while(@$plan=hsm_fetch_object($plans))
 
             <h2><?= $arr_portal_lang["title_select_plan"]; ?></h2>
 
-            <p class="error"><?=$error?></p>
+            <p class="error"><?=$error.$error_guest?></p>
 
             <form name="selectPlan" class="formFloatLeft" action="<?=$form_action?>" method="post" onsubmit="this.selectPlan.disabled = true">
               <fieldset>
@@ -44,12 +46,14 @@ while(@$plan=hsm_fetch_object($plans))
                 <input type="submit" name="selectPlan" value="<?= $arr_portal_lang["plan_button"]; ?>" <?=($isPortalPreview ? "disabled":"")?>>
               </fieldset>
             </form>
-            <!--
-            <form name="selectPlan" class="formFloatLeft" action="<?=$form_action?>" method="post" onsubmit="this.selectPlan.disabled = true">
-                <span> or  </span>
-                <input type="submit" onclick="" value="<?= $arr_portal_lang["btn_keep_plan"]; ?>" <?=($isPortalPreview ? "disabled":"")?>>
+
+            <form action="<?=$form_action?>" method="post" >
+                <input type="hidden" name="continue" value="true">
+                <input type="hidden" name="username" value="<?=$_SESSION['PORTAL']['user']?>">
+                <input type="hidden" name="password" value="<?=$_SESSION['PORTAL']['pass']?>">
+                <input type="submit" name="skipPlan" value="<?= $arr_portal_lang["btn_keep_plan"]; ?>" <?= ($isPortalPreview ? "disabled" : "") ?>>
             </form>
-            -->
+
         </div>
         <?php include('inc/footer.php') ?>
     </div>

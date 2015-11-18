@@ -16,7 +16,6 @@ while(@$plan=hsm_fetch_object($plans))
 <html>
 <head>
     <?php include("inc/header.php"); ?>
-
 </head>
 <body>
     <div id="container">
