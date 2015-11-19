@@ -116,7 +116,7 @@ if($_SESSION['PORTAL']['pms'] === true) {
             <p id="loading"></p>
 
             <p>
-                <span id="plan_name"></span> - <span id="plan_price"></span><br/>
+                <span id="plan_name"></span> <span id="plan_price"></span><br/>
                 <span id="plan_description" class="italic"> </span>
             </p>
 
@@ -125,9 +125,10 @@ if($_SESSION['PORTAL']['pms'] === true) {
                 to
                 <span id="end_time"></span>
             </p>
-            <p>used
-            <span id="timeleft" ></span> of <span id="total_time_sec" ></span> <br/>
-            <span id="timeleft_text" ></span><br/>
+            <p>
+                <span id="timeleft" ></span><br/>
+                <span id="total_time_sec" ></span> <br/>
+                <span id="timeleft_text" ></span><br/>
             </p>
             <p id="total_volume_down" >     </p>
             <p id="volume_down_left">       </p>
@@ -144,17 +145,17 @@ if($_SESSION['PORTAL']['pms'] === true) {
 
         <div class="divFloatRight">
 
-            <input type="button" value="<?= $arr_portal_lang["upgrade_billing_plan"]; ?>" onclick="window.location.href ='<?= $upgradeLink?>'">
+            <input type="button" value="<?= $arr_portal_lang["upgrade_billing_plan"]; ?>" onclick="window.location.href ='<?= $upgradeLink.$sessionurl2?>'">
 
             <?php
             if($change_pass_portal && !$userIsPMS) {   // If the user is not PMS and can change the password
                 ?>
-                <input type="button" value="<?= $arr_portal_lang["change_password"]; ?>" onclick="window.location.href = 'password.php'">
+                <input type="button" value="<?= $arr_portal_lang["change_password"]; ?>" onclick="window.location.href = 'password.php<?=$sessionurl2?>'">
                 <?php
             }
             ?>
 
-            <input type="button" value="<?= $arr_portal_lang["logout"]; ?>" onclick="window.location.href = '<?= $logoutLink?>'">
+            <input type="button" value="<?= $arr_portal_lang["logout"]; ?>" onclick="window.location.href = '<?= $logoutLink.$sessionurl2?>'">
         </div>
         </fieldset>
 

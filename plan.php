@@ -47,7 +47,7 @@ while(@$plan=hsm_fetch_object($plans))
               </fieldset>
             </form>
 
-            <form action="<?=$form_action?>" method="post" >
+            <form name="skipPlan" method="post" >
                 <input type="hidden" name="continue" value="true">
                 <input type="hidden" name="username" value="<?=$_SESSION['PORTAL']['user']?>">
                 <input type="hidden" name="password" value="<?=$_SESSION['PORTAL']['pass']?>">

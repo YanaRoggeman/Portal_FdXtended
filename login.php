@@ -154,7 +154,7 @@ require($_SERVER['DOCUMENT_ROOT']."/hsm/login_execute.php");
 
         if($spg){
             ?>
-            <form method="POST" name="spgForm" onsubmit="this.spglogin.disabled = true">
+            <form method="post" name="spgForm" onsubmit="this.spglogin.disabled = true">
                 <fieldset>
                     <legend><?= $arr_portal_lang['spg_title']; ?></legend>
                 <!-- <input type="hidden" value="spg">-->
@@ -172,7 +172,7 @@ require($_SERVER['DOCUMENT_ROOT']."/hsm/login_execute.php");
         // If a new account may be created provide a link to the subscriber page
         if(($paypal || $ccs || $reload_card)&& !$voucherCodeOnly) {
             ?>
-              <input type="button" onclick="window.location.href = 'newuser.php'" value="<?= $arr_portal_lang["new_account"]; ?>"> <br/>
+              <input type="button" onclick="window.location.href = 'newuser.php<?=$sessionurl2?>'" value="<?= $arr_portal_lang["new_account"]; ?>"> <br/>
         <?php
         }
         ?>

@@ -60,7 +60,7 @@ if(!$change_pass_portal) {
             </fieldset>
         </form>
 
-        <input type="button" value="<?= $arr_portal_lang["button_return"]; ?>" onclick="window.location.href = 'status.php'">
+        <input type="button" value="<?= $arr_portal_lang["button_return"]; ?>" onclick="window.location.href = 'status.php<?=$sessionurl2?>'">
     </div>
     <?php include('inc/footer.php'); ?>
 </div>

@@ -30,7 +30,7 @@
                 <label><?= $arr_portal_lang["last_name"]; ?>: </label>
                 <input type="text" name="lastname" maxlength="50" value="<?=$lastname?>"> <br/>
 
-                <label><?= $arr_portal_lang["e-mail"]; ?>: </label>
+                <label><?= $arr_portal_lang["e_mail"]; ?>: </label>
                 <input type="text" name="mail" maxlength="50" value="<?=$mail?>"> <br/>
 
                 <label><?= $arr_portal_lang["company"]; ?>: </label>

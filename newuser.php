@@ -23,19 +23,19 @@ require($_SERVER['DOCUMENT_ROOT']."/hsm/newuser_execute.php");
 
         if($ccs){
             ?>
-            <input type="button" onclick="window.location='<?=$linkcc?>'" value="<?= $arr_portal_lang["pay_by_credit_card"]; ?>"><br/>
+            <input type="button" onclick="window.location='<?=$linkcc.$sessionurl2?>'" value="<?= $arr_portal_lang["pay_by_credit_card"]; ?>"><br/>
         <?php
         }
 
         if($reload_card){                  // Default
             ?>
-            <input type="button" onclick="window.location='<?=$linkreload_card?>'" value="<?= $arr_portal_lang["pay_by_reload_card"]; ?>"><br/>
+            <input type="button" onclick="window.location='<?=$linkreload_card.$sessionurl2?>'" value="<?= $arr_portal_lang["pay_by_reload_card"]; ?>"><br/>
         <?php
         }
 
         if($paypal){                       // Periphery > Credit card settings > Paypal settings
             ?>
-            <input type="button" onclick="window.location='<?=$linkpaypal?>'" value="<?= $arr_portal_lang["pay_by_paypal"]; ?>">
+            <input type="button" onclick="window.location='<?=$linkpaypal.$sessionsurl2?>'" value="<?= $arr_portal_lang["pay_by_paypal"]; ?>">
         <?php
         }
 

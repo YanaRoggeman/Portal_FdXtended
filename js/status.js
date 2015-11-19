@@ -91,15 +91,18 @@ function SetStatus(sessionid){
             response = regprogress.responseXML.documentElement;
 
             var status = response.getElementsByTagName('status')[0].firstChild.data;
-            if(status == "Online" && divsUserData.status != null) {
-                divsUserData.status.innerHTML = status;
-
+            if(status == "Online" ){
+                if(divsUserData.status != null) {
+                    divsUserData.status.innerHTML = status;
+                }
+                if(divsUserData.loading != null)
+                    divsUserData.loading.innerHTML = "";
             /* IF LOADING - CALL FAILED */
             }else if(status == "Offline"){
                 if(statusRetry < retryIfFails) {
-                    if (divsUserData.loading != null)
+                    if (divsUserData.loading != null) {
                         divsUserData.loading.innerHTML = "<img src='img/loading.gif' alt='...'>";
-
+                    }
                     statusRetry++;
                     setTimeout("RefreshStatusData('" + sessionid + "')", statusRetryLoadingTime);
                 }else{
@@ -192,11 +195,11 @@ function SetStatus(sessionid){
 function SecondsToTime(time){
     if(time == -1) return "∞";
     time = Math.floor(time);
-    var hours = "0"+ Math.floor(time/ 3600);
-    var min = "0" + Math.floor((time - hours * 3600) / 60);
-    var sec = "0" + Math.floor(time - (hours*3600) - (min * 60));
+    var hours = ("0"+ Math.floor(time/ 3600)).substr(-2);
+    var min = ("0" + Math.floor((time - hours * 3600) / 60)).substr(-2);
+    var sec = ("0" + Math.floor(time - (hours*3600) - (min * 60))).substr(-2);
 
-    return (hours.substr(-2)+":"+min.substr(-2)+":"+sec.substr(-2));
+    return ((hours == "00" ? "" : hours+"h ") + (min == "00" ? "": min+"m ") + (sec == "00" ? "": sec+"s"));
 }
 
 function UnixToDate(unixDate){
